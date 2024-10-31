@@ -51,6 +51,15 @@ async def phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Введіть свою пошту:")
     return EMAIL
     
+async def email(update: Update, context: ContextTypes.DEFAULT_TYPE):   
+    context.user_data["email"] = update.message.text.strip()
+    await update.message.reply_text("Введіть свій вік:")
+    return AGE
+
+async def age(update: Update, context: ContextTypes.DEFAULT_TYPE):   
+    context.user_data["age"] = update.message.text.strip()
+    await update.message.reply_text("Введіть своє місто:")
+    return CITY
 
 #Скасування реєстрації і кінець розмови
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -60,7 +69,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 # Основна частина програми
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('ДОДАЙ СВІЙ ТОКЕН ТУТ').build()
+    application = ApplicationBuilder().token('7347148528:AAF7UELcx96pl-5NIqHId3-mNWOP0GAMbs8').build()
     application.add_error_handler(error_handler)
 
     # Додаємо обробник для команди /start
@@ -69,8 +78,11 @@ if __name__ == '__main__':
     conv_handler = ConversationHandler(
         entry_points=[CallbackQueryHandler(registration, pattern='^registration$')], #початок реєстрації (після натискання на кнопку "Зареєструватися")
         states={
+            
             FULL_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, full_name)], # перше запитання
             PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, phone)], # друге запитаня
+            EMAIL: [MessageHandler(filters.TEXT & ~filters.COMMAND, email)],
+            CITY: [MessageHandler(filters.TEXT & ~filters.COMMAND,city )],
         },
         fallbacks=[CommandHandler("cancel", cancel)],
     )
